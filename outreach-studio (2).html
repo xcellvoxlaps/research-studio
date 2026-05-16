@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Outreach Studio — Video Localization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07080a;--surface:#0e1014;--border:#1c1e24;--border2:#252830;
+  --text:#d8d9dc;--muted:#5a5d66;--faint:#2a2d34;
+  --accent:#c8a96e;--accent2:#7eb8a4;--danger:#c87e7e;--green:#7eb88a;--white:#eeeef0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:0.22;pointer-events:none;z-index:0}
+
+header{position:relative;z-index:10;border-bottom:1px solid var(--border);padding:18px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(8px);background:#07080acc}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--white)}
+.logo span{color:var(--accent);font-style:italic}
+.header-tag{font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase}
+
+.hero{position:relative;z-index:1;text-align:center;padding:68px 24px 48px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-size:9px;letter-spacing:0.3em;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,6vw,68px);font-weight:300;line-height:1.05;color:var(--white);margin-bottom:18px;letter-spacing:-0.02em}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:11px;color:var(--muted);max-width:480px;margin:0 auto;line-height:1.85;letter-spacing:0.03em}
+
+.main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:36px 20px 80px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:22px 26px;margin-bottom:14px}
+.card-label{font-size:8px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:-0.01em;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.step-num{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);font-size:9px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+input,textarea{background:#0a0b0e;border:1px solid var(--border2);border-radius:4px;padding:10px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px #c8a96e14}
+textarea{resize:vertical;line-height:1.7}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+
+.btn{cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;border-radius:4px;padding:11px 24px;border:none;transition:all 0.2s;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#07080a}
+.btn-primary:hover:not(:disabled){background:#d9bb87;transform:translateY(-1px);box-shadow:0 4px 20px #c8a96e28}
+.btn-primary:disabled{background:var(--faint);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-copy{background:transparent;color:var(--muted);border:1px solid var(--border);padding:5px 14px;font-size:9px;letter-spacing:0.12em;border-radius:3px;cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.2s}
+.btn-copy:hover{color:var(--text);border-color:var(--border2)}
+.btn-copy.copied{color:var(--green);border-color:var(--green)}
+
+.pill{display:inline-block;padding:3px 10px;border-radius:2px;font-size:9px;letter-spacing:0.1em;font-weight:500}
+.pill-gold{background:#c8a96e18;color:var(--accent);border:1px solid #c8a96e28}
+.pill-teal{background:#7eb8a418;color:var(--accent2);border:1px solid #7eb8a428}
+.pill-red{background:#c87e7e18;color:var(--danger);border:1px solid #c87e7e28}
+.pill-green{background:#7eb88a18;color:var(--green);border:1px solid #7eb88a28}
+.pill-muted{background:var(--faint);color:var(--muted)}
+
+.msg-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.msg-tab{cursor:pointer;padding:8px 16px;font-size:9px;letter-spacing:0.12em;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;transition:all 0.2s;text-transform:uppercase}
+.msg-tab:hover{color:var(--text);border-color:var(--border2)}
+.msg-tab.active{color:var(--white);border-color:var(--accent);background:#c8a96e0e}
+
+.msg-card{background:#090b0e;border:1px solid var(--border);border-radius:6px;overflow:hidden;animation:fadeUp 0.3s ease}
+.msg-card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:#0b0d11}
+.msg-section{padding:14px 20px;border-bottom:1px solid var(--border)}
+.msg-section:last-child{border-bottom:none}
+.msg-section-label{font-size:8px;letter-spacing:0.2em;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.msg-body{font-size:12px;color:#b8bac0;line-height:1.95;white-space:pre-wrap}
+.msg-hook{font-size:11px;color:var(--accent);font-style:italic;line-height:1.6;opacity:0.85}
+
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.profile-cell{background:#0a0b0e;border-radius:4px;padding:12px 14px;border:1px solid var(--border)}
+.profile-cell-label{font-size:8px;letter-spacing:0.18em;color:var(--muted);margin-bottom:5px;text-transform:uppercase}
+.profile-cell-value{font-size:11px;color:#b8bac0;line-height:1.55}
+
+.subject-list{display:flex;flex-direction:column;gap:6px}
+.subject-item{background:#0a0b0e;border:1px solid var(--border);border-radius:4px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:border-color 0.2s}
+.subject-item:hover{border-color:var(--border2)}
+.subject-text{font-size:12px;color:#c8c9cc;flex:1;line-height:1.5}
+
+.loading-state{text-align:center;padding:48px 20px}
+.spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+.loading-label{font-size:10px;letter-spacing:0.2em;color:var(--muted)}
+.loading-sub{font-size:9px;color:var(--faint);margin-top:6px;letter-spacing:0.08em;line-height:1.6}
+
+.error-msg{background:#c87e7e0e;border:1px solid #c87e7e28;border-radius:4px;padding:12px 16px;font-size:11px;color:var(--danger);margin-top:12px;line-height:1.6}
+.help{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6;letter-spacing:0.03em}
+
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease infinite;display:inline-block}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:22px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-note{font-size:9px;color:var(--muted);letter-spacing:0.1em}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.fade-in{animation:fadeUp 0.5s ease both}
+.d1{animation-delay:0.05s}.d2{animation-delay:0.18s}.d3{animation-delay:0.3s}
+
+@media(max-width:600px){
+  header{padding:14px 18px}
+  .main{padding:24px 14px 60px}
+  .card{padding:18px 16px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Outreach<span>Studio</span></div>
+  <div class="header-tag">Video Localization · Conversion Intelligence</div>
+</header>
+
+<section class="hero fade-in d1">
+  <div class="hero-eyebrow">Smart Outreach · Built for Closers</div>
+  <h1 class="hero-title">Turn any profile into<br/><em>a conversation</em></h1>
+  <p class="hero-sub">Drop a social link. Get deeply personalised, curiosity-driven outreach that opens doors — not spam filters.</p>
+</section>
+
+<main class="main">
+
+  <!-- STEP 1 -->
+  <div class="card fade-in d2">
+    <div class="card-label"><div class="step-num">1</div> Your Details <span style="color:var(--faint);font-size:9px;margin-left:4px">— set once, used in every message</span></div>
+    <div class="section-title">About You & Your Service</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <div class="profile-cell-label" style="margin-bottom:5px">Your Name / Brand</div>
+        <input id="yourName" type="text" placeholder="e.g. Marco · LinguaFrame · Babel Studio"/>
+      </div>
+      <div>
+        <div class="profile-cell-label" style="margin-bottom:5px">Your Website</div>
+        <input id="yourWebsite" type="text" placeholder="https://yoursite.com"/>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div class="profile-cell-label" style="margin-bottom:5px">What you do — in your own words</div>
+      <textarea id="yourOffer" rows="3" placeholder="e.g. I help video creators reach global audiences by adapting their content into multiple languages — keeping the original tone, energy, and cultural feel intact. Not just subtitles. Full creative localization."></textarea>
+      <div class="help">Write naturally. This shapes your introduction in every message — the AI will refine the wording.</div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div class="profile-cell-label" style="margin-bottom:5px">Your proof / unique angle (optional but powerful)</div>
+      <textarea id="yourAngle" rows="2" placeholder="e.g. I've localized content for channels with 500K+ subs. My adaptations have trended on YouTube. Former journalist, now full-time localizer..."></textarea>
+    </div>
+
+    <div>
+      <div class="profile-cell-label" style="margin-bottom:5px">Extra instructions for this outreach (optional)</div>
+      <textarea id="extraPointers" rows="2" placeholder="e.g. Focus on TikTok growth. Keep DMs under 100 words. Don't mention pricing. Emphasise speed of turnaround..."></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card fade-in d3">
+    <div class="card-label"><div class="step-num">2</div> Target Profile</div>
+    <div class="section-title">Who Are You Reaching Out To?</div>
+
+    <div style="margin-bottom:12px">
+      <div class="profile-cell-label" style="margin-bottom:5px">Social Media Link</div>
+      <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
+        <input id="targetUrl" type="text" style="flex:1;min-width:180px" placeholder="youtube.com/@handle  ·  instagram.com/user  ·  tiktok.com/@user  ·  linkedin.com/in/name"/>
+        <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalysis()">
+          <span id="analyzeBtnText">Analyse →</span>
+        </button>
+      </div>
+      <div class="help">Works with YouTube, Instagram, TikTok, LinkedIn, Twitter/X, Facebook Pages</div>
+    </div>
+
+    <div id="errorMsg" style="display:none" class="error-msg"></div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingState" style="display:none" class="card">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-label" id="loadingLabel">Profiling target</div>
+      <div class="loading-sub" id="loadingSub">Reading content signals · mapping language gaps · building outreach strategy</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" style="display:none">
+
+    <!-- PROFILE -->
+    <div class="card fade-in">
+      <div class="card-label">Profile Intelligence</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--white);letter-spacing:-0.02em;line-height:1.1" id="res-handle"></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic" id="res-tagline"></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px" id="res-pills"></div>
+      </div>
+      <div class="profile-grid" id="res-grid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="profile-cell" style="border-color:#c87e7e28">
+          <div class="profile-cell-label" style="color:var(--danger)">⚠ The Gap</div>
+          <div class="profile-cell-value" id="res-gap" style="color:#c8a0a0"></div>
+        </div>
+        <div class="profile-cell" style="border-color:#7eb8a428">
+          <div class="profile-cell-label" style="color:var(--accent2)">✦ The Opportunity</div>
+          <div class="profile-cell-value" id="res-opp" style="color:#9ec8b8"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBJECT LINES -->
+    <div class="card fade-in">
+      <div class="card-label">Subject Lines <span style="color:var(--muted);margin-left:4px;font-size:9px">— built to survive spam filters & earn the open</span></div>
+      <div class="subject-list" id="res-subjects"></div>
+    </div>
+
+    <!-- FOCUS POINTS -->
+    <div class="card fade-in">
+      <div class="card-label">Key Focus Points</div>
+      <div id="res-focus" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="card fade-in">
+      <div class="card-label">Personalised Outreach Messages</div>
+      <div class="msg-tabs" id="msgTabs"></div>
+      <div id="msgPanel"></div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-note">Outreach Studio · Video Localization</div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="dot"></div>
+    <span class="footer-note">Powered by OpenAI · Private · No data stored</span>
+  </div>
+</footer>
+
+<script>
+// ── PASTE YOUR OPENAI API KEY HERE ──
+const OPENAI_API_KEY = "sk-b96a790cd1b2d5fc9471e67a91b5acff3e5d1054494f6aa3bbfa0daf08f40156";
+
+// ── STATE ──
+let currentMessages = [];
+let activeMsgIdx = 0;
+let copiedTimers = {};
+let loadingTimer = null;
+
+const loadingSteps = [
+  ["Profiling target", "Reading platform signals · content themes · audience signals"],
+  ["Mapping the gap", "Identifying language barriers · reach ceiling · untapped markets"],
+  ["Building strategy", "Crafting curiosity hooks · positioning localization as their next move"],
+  ["Writing messages", "Personalising copy · spam-proofing · refining tone"],
+];
+
+function cycleLoading(i) {
+  const [label, sub] = loadingSteps[i % loadingSteps.length];
+  document.getElementById("loadingLabel").textContent = label;
+  document.getElementById("loadingSub").textContent = sub;
+  loadingTimer = setTimeout(() => cycleLoading(i + 1), 2400);
+}
+
+// ── THE BRAIN: deeply pre-loaded system prompt ──
+function buildSystemPrompt(yourName, yourWebsite, yourOffer, yourAngle, extraPointers) {
+  return `You are a senior outreach strategist who specialises exclusively in video localisation — the business of adapting video content (YouTube, TikTok, Instagram Reels, documentaries, explainers, brand videos) into other languages while preserving tone, energy, and cultural authenticity.
+
+You understand this industry deeply:
+- Content creators hit a language ceiling. Their best work only reaches the audience that speaks their language.
+- Video localisation (subtitles, dubbing, multilingual versions) is the highest-leverage way to multiply reach without creating new content.
+- The clients most ready to buy are creators who already publish quality content, have an engaged audience, and are starting to think about international growth.
+- Pain points: they don't know what localisation actually costs or takes, they fear losing their voice in translation, and they're not sure if it's worth it yet.
+- The goal of outreach is NOT to sell immediately — it's to open a conversation by making them curious and making them feel genuinely understood.
+
+SENDER CONTEXT:
+- Name/Brand: ${yourName || "not specified"}
+- Website: ${yourWebsite || "not provided"}
+- What they offer: ${yourOffer || "professional video localisation — adapting video content into multiple languages"}
+- Unique proof/angle: ${yourAngle || "not specified"}
+- Extra instructions: ${extraPointers || "none"}
+
+YOUR WRITING RULES — follow these without exception:
+1. NEVER open with "I am a video localisation specialist" or any version of "I do X". Instead, introduce the service through what it unlocks for THEM — frame it as discovering something about their content, not advertising a service.
+2. NEVER use spam trigger phrases: "quick question", "I came across your profile", "I noticed", "I wanted to reach out", "I hope this finds you well", "synergy", "circle back", "touch base".
+3. Write like a knowledgeable peer who spotted something genuinely interesting — not a vendor with a pitch deck.
+4. Subject lines must be specific, slightly intriguing, and never click-baity. Good examples: "Your documentary format — a thought", "Something I kept thinking about after watching your last video", "A question about your French audience".
+5. DMs: conversational, warm, under 110 words. Emails: structured, confident, under 200 words.
+6. If a website is provided, include it naturally in at least one message as a reference — not a sales link.
+7. Every message must feel like it was written specifically for THIS person after genuinely watching their content.
+8. Curiosity is the engine. Make them think "how does this person know that about me?"
+
+RESPOND ONLY IN THIS EXACT JSON — no markdown, no backticks, no extra text before or after:
+{"profile":{"handle":"","platform":"","location":"","tagline":"","niche":"","content_language":"","audience":"","reach":"","gap":"","opportunity":""},"subjects":[{"line":"","type":"curiosity|specific|value|soft","rationale":""},{"line":"","type":"","rationale":""},{"line":"","type":"","rationale":""},{"line":"","type":"","rationale":""},{"line":"","type":"","rationale":""}],"focus_points":[{"point":"","why":""},{"point":"","why":""},{"point":"","why":""}],"messages":[{"channel":"YouTube DM / Email","tone":"Peer Curiosity","hook":"","body":"","subject_recommended":""},{"channel":"Instagram / TikTok DM","tone":"Direct Warmth","hook":"","body":"","subject_recommended":""},{"channel":"Cold Email — Decision Maker","tone":"Strategic Value","hook":"","body":"","subject_recommended":""}]}`;
+}
+
+// ── MAIN ──
+async function runAnalysis() {
+  const targetUrl    = document.getElementById("targetUrl").value.trim();
+  const yourName     = document.getElementById("yourName").value.trim();
+  const yourWebsite  = document.getElementById("yourWebsite").value.trim();
+  const yourOffer    = document.getElementById("yourOffer").value.trim();
+  const yourAngle    = document.getElementById("yourAngle").value.trim();
+  const extraPointers= document.getElementById("extraPointers").value.trim();
+
+  if (!targetUrl) { showError("Paste a social media link to analyse."); return; }
+  if (!OPENAI_API_KEY || OPENAI_API_KEY.length < 10) { showError("API key missing."); return; }
+
+  hideError();
+  showLoading(true);
+  cycleLoading(0);
+
+  const userMessage = `Analyse this social media profile and generate personalised video localisation outreach content.
+
+PROFILE URL: ${targetUrl}
+
+Based on the URL, platform, handle name, and any context you can infer about this creator's niche, content style, audience, and language — build a full outreach package as specified in your instructions.
+
+Make every message feel handcrafted for THIS specific creator. Be specific about their content type and why localisation is the exact right move for them right now.`;
+
+  try {
+    const res = await fetch("https://corsproxy.io/?" + encodeURIComponent("https://api.g0i.ai/v1/chat/completions"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "qwen3-coder-80b",
+        temperature: 0.75,
+        max_tokens: 2000,
+        messages: [
+          { role: "system", content: buildSystemPrompt(yourName, yourWebsite, yourOffer, yourAngle, extraPointers) },
+          { role: "user", content: userMessage }
+        ]
+      })
+    });
+
+    const data = await res.json();
+    clearTimeout(loadingTimer);
+
+    if (data.error) throw new Error(data.error.message || "API error");
+
+    const rawText = data.choices?.[0]?.message?.content || "";
+    // Strip <think>...</think> blocks that Qwen models sometimes add
+    const stripped = rawText.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/```json|```/g, "").trim();
+
+    const parsed = JSON.parse(stripped);
+
+    showLoading(false);
+    renderResults(parsed);
+
+  } catch(e) {
+    clearTimeout(loadingTimer);
+    showLoading(false);
+    showError("Error: " + e.message + " — If opening the file locally, try hosting it on Netlify instead.");
+  }
+}
+
+// ── RENDER ──
+function renderResults(data) {
+  const p = data.profile;
+
+  document.getElementById("res-handle").textContent = p.handle || "—";
+  document.getElementById("res-tagline").textContent = p.tagline ? `"${p.tagline}"` : "";
+
+  const pills = document.getElementById("res-pills");
+  pills.innerHTML = [
+    p.platform ? `<span class="pill pill-gold">${p.platform}</span>` : "",
+    p.location  ? `<span class="pill pill-teal">${p.location}</span>`  : "",
+    p.reach     ? `<span class="pill pill-muted">${p.reach}</span>`    : "",
+  ].join("");
+
+  const gridFields = [
+    ["Niche / Content Type", p.niche],
+    ["Content Language", p.content_language],
+    ["Audience", p.audience],
+    ["Estimated Reach", p.reach],
+  ];
+  document.getElementById("res-grid").innerHTML = gridFields.map(([l,v]) => `
+    <div class="profile-cell">
+      <div class="profile-cell-label">${l}</div>
+      <div class="profile-cell-value">${v || "—"}</div>
+    </div>`).join("");
+
+  document.getElementById("res-gap").textContent = p.gap || "—";
+  document.getElementById("res-opp").textContent = p.opportunity || "—";
+
+  // Subject lines
+  const typeStyle = { curiosity:"pill-gold", specific:"pill-teal", value:"pill-green", soft:"pill-muted" };
+  document.getElementById("res-subjects").innerHTML = (data.subjects || []).map((s, i) => `
+    <div class="subject-item">
+      <div style="flex:1">
+        <div class="subject-text">${escHtml(s.line)}</div>
+        ${s.rationale ? `<div style="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5">${escHtml(s.rationale)}</div>` : ""}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="pill ${typeStyle[s.type?.toLowerCase()] || "pill-muted"}">${s.type || ""}</span>
+        <button class="btn-copy" id="copybtn-subj${i}" onclick="copyText(${JSON.stringify(s.line)},'subj${i}')">Copy</button>
+      </div>
+    </div>`).join("");
+
+  // Focus points
+  document.getElementById("res-focus").innerHTML = (data.focus_points || []).map((f, i) => `
+    <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:#0a0b0e;border:1px solid var(--border);border-radius:4px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--accent);font-weight:300;line-height:1;flex-shrink:0;margin-top:2px">${i+1}</div>
+      <div>
+        <div style="font-size:12px;color:var(--white);font-weight:500;margin-bottom:4px">${escHtml(f.point)}</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.65">${escHtml(f.why)}</div>
+      </div>
+    </div>`).join("");
+
+  // Messages
+  currentMessages = data.messages || [];
+  activeMsgIdx = 0;
+  renderTabs();
+  renderMessage();
+
+  document.getElementById("results").style.display = "block";
+  setTimeout(() => document.getElementById("results").scrollIntoView({ behavior:"smooth", block:"start" }), 80);
+}
+
+function renderTabs() {
+  document.getElementById("msgTabs").innerHTML = currentMessages.map((m, i) => `
+    <button class="msg-tab ${i===activeMsgIdx?"active":""}" onclick="switchMsg(${i})">
+      ${["01 · DM","02 · Social DM","03 · Email"][i] || `0${i+1}`}
+    </button>`).join("");
+}
+
+function switchMsg(i) {
+  activeMsgIdx = i;
+  renderTabs();
+  renderMessage();
+}
+
+function renderMessage() {
+  const m = currentMessages[activeMsgIdx];
+  if (!m) return;
+  const tones = {
+    "Peer Curiosity":  { border:"var(--accent)",  bg:"#0e0c08" },
+    "Direct Warmth":   { border:"var(--accent2)", bg:"#080e0d" },
+    "Strategic Value": { border:"#818cf8",         bg:"#0a0a10" },
+  };
+  const tc = tones[m.tone] || { border:"var(--border)", bg:"var(--surface)" };
+
+  document.getElementById("msgPanel").innerHTML = `
+    <div class="msg-card" style="border-left:3px solid ${tc.border};background:${tc.bg}">
+      <div class="msg-card-head">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="pill" style="background:${tc.border}18;color:${tc.border};border:1px solid ${tc.border}30">${escHtml(m.tone)}</span>
+          <span class="pill pill-muted">${escHtml(m.channel)}</span>
+          ${m.subject_recommended ? `<span style="font-size:10px;color:var(--muted)">Subject: <span style="color:var(--text)">${escHtml(m.subject_recommended)}</span></span>` : ""}
+        </div>
+        <button class="btn-copy" id="copybtn-msg${activeMsgIdx}" onclick="copyText(${JSON.stringify(m.body)},'msg${activeMsgIdx}')">Copy message</button>
+      </div>
+      ${m.hook ? `<div class="msg-section">
+        <div class="msg-section-label">Emotional Hook</div>
+        <div class="msg-hook">"${escHtml(m.hook)}"</div>
+      </div>` : ""}
+      <div class="msg-section">
+        <div class="msg-section-label">Message</div>
+        <div class="msg-body">${escHtml(m.body)}</div>
+      </div>
+    </div>`;
+}
+
+// ── UTILS ──
+function copyText(text, id) {
+  navigator.clipboard.writeText(text).catch(() => {
+    const t = document.createElement("textarea");
+    t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove();
+  });
+  const btn = document.getElementById(`copybtn-${id}`);
+  if (btn) {
+    btn.textContent = "✓ Copied"; btn.classList.add("copied");
+    clearTimeout(copiedTimers[id]);
+    copiedTimers[id] = setTimeout(() => { if(btn){btn.textContent="Copy";btn.classList.remove("copied");} }, 2000);
+  }
+}
+function escHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function showError(msg){ const el=document.getElementById("errorMsg"); el.style.display="block"; el.textContent=msg; }
+function hideError(){ document.getElementById("errorMsg").style.display="none"; }
+function showLoading(v){
+  document.getElementById("loadingState").style.display = v ? "block" : "none";
+  document.getElementById("analyzeBtnText").textContent = v ? "Analysing…" : "Analyse →";
+  document.getElementById("analyzeBtn").disabled = v;
+  if (!v) { clearTimeout(loadingTimer); document.getElementById("results").style.display="none"; }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("targetUrl").addEventListener("keydown", e => { if(e.key==="Enter") runAnalysis(); });
+});
+</script>
+</body>
+</html>
