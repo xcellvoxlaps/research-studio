@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,16 +160,23 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:22
 
     <div style="margin-bottom:12px">
       <div class="profile-cell-label" style="margin-bottom:5px">Social Media Link</div>
-      <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
-        <input id="targetUrl" type="text" style="flex:1;min-width:180px" placeholder="youtube.com/@handle  ·  instagram.com/user  ·  tiktok.com/@user  ·  linkedin.com/in/name"/>
-        <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalysis()">
-          <span id="analyzeBtnText">Analyse →</span>
-        </button>
-      </div>
-      <div class="help">Works with YouTube, Instagram, TikTok, LinkedIn, Twitter/X, Facebook Pages</div>
+      <input id="targetUrl" type="text" placeholder="youtube.com/@handle  ·  instagram.com/user  ·  tiktok.com/@user  ·  linkedin.com/in/name"/>
+      <div class="help">Paste the link — then describe what you know about them below for accurate results.</div>
     </div>
 
-    <div id="errorMsg" style="display:none" class="error-msg"></div>
+    <div style="margin-bottom:12px">
+      <div class="profile-cell-label" style="margin-bottom:5px">What do you know about them? <span style="color:var(--faint);font-weight:normal">(the more detail, the sharper the output)</span></div>
+      <textarea id="targetContext" rows="4" placeholder="e.g. Tunisian independent media channel — makes explainer videos about politics, economy, and society in Arabic. Around 57K TikTok followers, 31K Instagram. Also publishes articles in French and English on their site. Very high quality production, calm editorial tone. Active on YouTube too.&#10;&#10;Or paste their bio, a video title, a description — anything you know."></textarea>
+      <div class="help">The AI cannot visit links or browse profiles. Tell it what you see: their niche, language, audience, content style, follower count, recent videos — anything. Even 2–3 sentences makes the output dramatically more accurate.</div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalysis()">
+        <span id="analyzeBtnText">Generate Outreach →</span>
+      </button>
+    </div>
+
+    <div id="errorMsg" style="display:none;margin-top:12px" class="error-msg"></div>
   </div>
 
   <!-- LOADING -->
@@ -294,7 +302,8 @@ RESPOND ONLY IN THIS EXACT JSON — no markdown, no backticks, no extra text bef
 
 // ── MAIN ──
 async function runAnalysis() {
-  const targetUrl    = document.getElementById("targetUrl").value.trim();
+  const targetUrl     = document.getElementById("targetUrl").value.trim();
+  const targetContext = document.getElementById("targetContext").value.trim();
   const yourName     = document.getElementById("yourName").value.trim();
   const yourWebsite  = document.getElementById("yourWebsite").value.trim();
   const yourOffer    = document.getElementById("yourOffer").value.trim();
@@ -308,33 +317,52 @@ async function runAnalysis() {
   showLoading(true);
   cycleLoading(0);
 
-  const userMessage = `Analyse this social media profile and generate personalised video localisation outreach content.
+  const userMessage = `Generate personalised video localisation outreach for this creator.
 
-PROFILE URL: ${targetUrl}
+PROFILE / LINK: ${targetUrl}
 
-Based on the URL, platform, handle name, and any context you can infer about this creator's niche, content style, audience, and language — build a full outreach package as specified in your instructions.
+WHAT WE KNOW ABOUT THEM:
+${targetContext || "No extra context given — base the output on the handle and platform only. Be honest about what is inferred vs confirmed."}
 
-Make every message feel handcrafted for THIS specific creator. Be specific about their content type and why localisation is the exact right move for them right now.`;
+IMPORTANT RULES:
+- Use ONLY the information provided above. Do not invent video titles, exact subscriber counts, or specific details you cannot confirm.
+- If inferring, keep it clearly plausible — do not present guesses as facts.
+- Where context is rich, be highly specific. Where context is thin, keep profile fields vague but keep the messages warm and curiosity-driven.
+- Messages must feel like they came from someone who genuinely understands this creator's world.`;
 
   try {
-    const res = await fetch("https://corsproxy.io/?" + encodeURIComponent("https://api.g0i.ai/v1/chat/completions"), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "qwen3-coder-80b",
-        temperature: 0.75,
-        max_tokens: 2000,
-        messages: [
-          { role: "system", content: buildSystemPrompt(yourName, yourWebsite, yourOffer, yourAngle, extraPointers) },
-          { role: "user", content: userMessage }
-        ]
-      })
+    const API_TARGET = "https://api.g0i.ai/v1/chat/completions";
+    const PROXIES = [
+      url => url,
+      url => "https://corsproxy.io/?" + encodeURIComponent(url),
+      url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+      url => "https://thingproxy.freeboard.io/fetch/" + url,
+    ];
+
+    const body = JSON.stringify({
+      model: "qwen3-coder-80b",
+      temperature: 0.75,
+      max_tokens: 2000,
+      messages: [
+        { role: "system", content: buildSystemPrompt(yourName, yourWebsite, yourOffer, yourAngle, extraPointers) },
+        { role: "user", content: userMessage }
+      ]
     });
 
-    const data = await res.json();
+    let data = null;
+    let lastErr = null;
+    for (const proxyFn of PROXIES) {
+      try {
+        const r = await fetch(proxyFn(API_TARGET), {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
+          body
+        });
+        data = await r.json();
+        if (data && (data.choices || data.error)) break; // got a real response
+      } catch(e) { lastErr = e; }
+    }
+    if (!data) throw lastErr || new Error("All connection attempts failed");
     clearTimeout(loadingTimer);
 
     if (data.error) throw new Error(data.error.message || "API error");
